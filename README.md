@@ -3,37 +3,37 @@
 ## Zabbix
 
 Zabbix is an open-source network monitoring tool that monitors:
- - Networks, Servers, Apllications, Logs, Security Events, Cloud Infrastructure
+- Networks, servers, applications, logs, security events, and cloud infrastructure
 
- The tool monitors network devices via SNMP:
+The tool monitors network devices via SNMP:
 
- - Interface Traffic, Errors, CPU load, Link Status, Device Uptime, Bandwidth Usage
+- Interface traffic, errors, CPU load, link status, device uptime, and bandwidth usage
 
-In servers and host OSes via agent; it monitors
+On servers and host operating systems via agent, it monitors:
 
-- CPU, RAM, Disk, Event Logs, Services, Processes, Logs
+- CPU, RAM, disk, event logs, services, processes, and logs
 
 Zabbix can also trigger alerts when:
 
-- Packet drops increase, Interface floods occur, CPU spikes
+- Packet drops increase, interface floods occur, or CPU usage spikes
 
 ### Core Problems Solved by Zabbix
 
-1. "We don't know when system fails"
+1. "We don't know when a system fails"
 
-    - continously checks device status
+    - continuously checks device status
     - detects outages automatically
     - alerts immediately
 
 2. "We don't know why performance is slow"
 
     - collects performance metrics
-    - show trends
+    - shows trends
     - identifies bottlenecks
 
-3. "We don't have visibility acroess infrastructure"
+3. "We don't have visibility across infrastructure"
 
-    Provides centralised monitoring for; routers, switches, servers, applications, services, logs.
+    Provides centralised monitoring for routers, switches, servers, applications, services, and logs.
 
 4. "We can't detect abnormal behaviour early"
 
@@ -45,50 +45,50 @@ Zabbix can also trigger alerts when:
 
     Provides historical metrics:
     - bandwidth graphs
-    - CPU graphs
-    - Service uptime logs
+    - CPU usage graphs
+    - service uptime logs
 
 6. "We can't measure reliability or SLA"
 
-    Zabbix calculates; uptime percentage, availability reports, SLA Compliance used for audits and management reports
+    Zabbix calculates uptime percentages and availability reports for SLA compliance, audits, and management reports.
 
 
 
 ### SNMP
 
-Simple Network Management Protocol is an application layer protocol used for monitoring, managing and queriyiing network devices such as routers, switches, servers, firewalls, printers and IoT endpoints.
+Simple Network Management Protocol (SNMP) is an application layer protocol used for monitoring, managing, and querying network devices such as routers, switches, servers, firewalls, printers, and IoT endpoints.
 
-It enables a centralised system to: 
+It enables a centralised system to:
 - collect operational metrics
-- detect faults 
+- detect faults
 - trigger alerts
 - modify device parameters remotely
 
-SNMP Communications types
+SNMP communication types:
 
-GET - SET - TRAP
+GET -> SET -> TRAP
 
-Example
+Example:
 
-    - Zabbix sends GET request to routers
-    - Router checks MIB and replies with OID value of interface status
-    - Router sends TRAP -> "Interface Down"
+- Zabbix sends a GET request to a router.
+- The router checks its MIB and replies with the OID value for interface status.
+- The router can also send a TRAP event such as "Interface Down."
 
-So I'm going to implement Zabbix in my Home Lab
+I implemented Zabbix in my home lab.
 
 ![Home_Lab.png](./images/Home_Lab.png)
 
 Reference: `https://www.zabbix.com/documentation/7.4/en/manual/installation/install_from_packages`
 
- ### Zabbix Installation
+### Zabbix Installation
 
- Zabbix is going to be run in UbuntuServer-1 as a server. Actually it is going to be implemented for TheCoinSociety infrastructure (an imaginary company). For it to be easy; referencing to the website and implementing configuration; i'm going to access the server from UbuntuDesktop-1 remotely via SSH.
+I ran the Zabbix server on UbuntuServer-1 for TheCoinSociety infrastructure (an imaginary company). To make installation and configuration easier, I accessed UbuntuServer-1 remotely from UbuntuDesktop-1 via SSH.
 
- So according to the official website I have to define the OS which is going to host zabbix server so that I can get corresponding installation procedures.
+According to the official website, I first selected the OS hosting the Zabbix server so I could get the correct installation procedure.
 
- ![Zabbix_Site.png](./images/)
+![zabbix.png](./images/zabbix.png)
 
- Then, I follow the process accordingly.
+I then followed the process accordingly.
 
 ![Zabbix_1.png](./images/zabbix_1.png)
 
@@ -96,31 +96,31 @@ Reference: `https://www.zabbix.com/documentation/7.4/en/manual/installation/inst
 
 ![Zabbix_3.png](./images/zabbix_3.png)
 
-Zabbix Server has successfully been installed and is running as a service in Ubuntu Server. It is accessible via the server's IP `172.16.1.11/zabbix`(statically assigned IP).
+Zabbix Server was successfully installed and was running as a service on Ubuntu Server. It was accessible via the server IP `172.16.1.11/zabbix` (statically assigned).
 
-In the UbuntuServer Zabbix is running as both a server and an agent.
+On UbuntuServer-1, Zabbix ran as both a server and an agent.
 
-This the the Zabbix Dashboard.
+This was the Zabbix dashboard.
 
 ![Zabbix_4.png](./images/zabbix_4.png)
 
-I am going to configure network devices with SNMPv2 so that is advertises information to the Zabbix Server and also add agents on Windows and Ubuntu Desktop.
+I configured network devices with SNMPv2 so Zabbix could poll their metrics, and I also added agents on Windows and Ubuntu Desktop.
 
 ![Zabbix_5.png](./images/zabbix_5.png)
-Now devices are added to the Zabbix for monitoring. Device name `Inno` is an Ubuntu Desktop, turn it off to save my RAM usage.
+The devices were added to Zabbix for monitoring. The device named `Inno` was an Ubuntu Desktop host, which I turned off to save RAM usage.
 
-Let me test one network device. I am going to turn off `interface serial 3/0` on TCS-Router. 
+To test monitoring on a network device, I shut down `interface serial 3/0` on TCS-Router.
 
 ![Zabbix_6.png](./images/zabbix_6.png)
 
-As you can see below; it work and also give information on the down time of the interface.
+As shown below, it worked and provided downtime information for the serial interface
 
 ![Zabbix_7.png](./images/zabbix_7.png)
 
-When I turned the interface up; it was marked as resolved.
+When I brought the interface back up, the issue was marked as resolved.
 
 ![Zabbix_8.png](./images/zabbix_8.png)
 
-I can also visualise traffic on an interface of a network device. Below is `int g1/0` traffic graph.
+I also visualised traffic on an interface of a network device. Below is the traffic graph for `int g1/0`.
 
 ![Zabbix_9.png](./images/zabbix_9.png)
